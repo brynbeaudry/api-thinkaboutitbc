@@ -15,9 +15,9 @@ namespace api_thinkaboutitbc.Data
         //public DbSet<Event> Events { get; set; }
         //public DbSet<EventGuest> EventGuests { get; set; }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
-        //public DbSet<Game> Games { get; set; }
-        //  public DbSet<GameRank> GameRanks { get; set; }
-        //public DbSet<Leaderboard> Leaderboards { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -46,6 +46,31 @@ namespace api_thinkaboutitbc.Data
                 .HasIndex("ProviderName")
                 .HasName("ProviderNameIndex");
             //can make forieg key later
+
+            builder.Entity<Image>()
+                .Property(i => i.FullImage)
+                .HasColumnType("MediumBlob");
+
+            builder.Entity<Image>()
+                .Property(i => i.ThumbnailImage)
+                .HasColumnType("Blob");
+
+            /*   */
+            builder.Entity<Post>()
+                .HasOne(p => p.Image);
+
+            /* builder.Entity<Comment>()
+                .Property<int>("ImageId"); */
+            builder.Entity<Comment>()
+                .HasOne(c => c.Image);
+
+            builder.Entity<Post>()
+                .HasMany(p => p.Comments);
+            
+            /* builder.Entity<Comment>()
+                .Property<int>("PostId"); */
+            builder.Entity<Comment>()
+                .HasOne(c => c.Post);
 
 
         }
