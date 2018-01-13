@@ -22,18 +22,22 @@ namespace api_thinkaboutitbc.Data
                 UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 UserSeedAsync(db, roleManager, userManager);
             }
-            /*
-            if (!db.Activities.Any())
+    
+            if (!db.Images.Any())
             {
-                db.Activities.AddRange(GetActivities().ToArray());
+                db.Images.AddRange(GetImages(db).ToArray());
                 db.SaveChanges();
             }
-            if (!db.Events.Any())
+            if (!db.Posts.Any())
             {
-                db.Events.AddRange(GetEvents(db).ToArray());
+                db.Posts.AddRange(GetPosts(db).ToArray());
                 db.SaveChanges();
             }
-            */
+            if (!db.Comments.Any())
+            {
+                db.Comments.AddRange(GetComments(db).ToArray());
+                db.SaveChanges();
+            }
         }
 
         public static async void UserSeedAsync(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
