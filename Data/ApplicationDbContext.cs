@@ -14,7 +14,7 @@ namespace api_thinkaboutitbc.Data
         //public DBSet<OpenIdDictApplications> OpenIdDictApplications { get;set;}
         //public DbSet<Event> Events { get; set; }
         //public DbSet<EventGuest> EventGuests { get; set; }
-        public DbSet<ApplicationUser> ApplicationUser { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Image> Images { get; set; }

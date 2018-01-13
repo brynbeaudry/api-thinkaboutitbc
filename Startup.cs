@@ -49,7 +49,13 @@ namespace api_thinkaboutitbc
              .AddEntityFrameworkStores<ApplicationDbContext>()
              .AddDefaultTokenProviders();
 
-             // Configure Identity to use the same JWT claims as OpenIddict instead
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.ClaimsIdentity.RoleClaimType = "Member";
+                options.ClaimsIdentity.RoleClaimType = "Admin";
+            });
+
+            // Configure Identity to use the same JWT claims as OpenIddict instead
             // of the legacy WS-Federation claims it uses by default (ClaimTypes),
             // which saves you from doing the mapping in your authorization controller.
             services.Configure<IdentityOptions>(options =>
@@ -213,10 +219,10 @@ namespace api_thinkaboutitbc
                     template: "{controller=Home}/{action=Index}/{id?}");
                 //routes.MapRoute()
             });
-            if (ctx.Database.EnsureCreated())
-            {
-                DummyData.Initialize(ctx, app.ApplicationServices);
-            }
+
+            //Comment this out when running a migration. Then run after the database is created.
+            DummyData.Initialize(ctx, app.ApplicationServices);
+            
            
 
 

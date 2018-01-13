@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api_thinkaboutitbc.Models;
 using api_thinkaboutitbc.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using System.Text;
@@ -16,28 +17,29 @@ namespace api_thinkaboutitbc.Data
         {
             IServiceScopeFactory scopeFactory = services.GetRequiredService<IServiceScopeFactory>();
 
-            using (IServiceScope scope = scopeFactory.CreateScope())
-            {
-                RoleManager<Microsoft.AspNetCore.Identity.IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            IServiceScope scope = scopeFactory.CreateScope();
+            
+                RoleManager<IdentityRole> roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 UserSeedAsync(db, roleManager, userManager);
-            }
-    
-            if (!db.Images.Any())
-            {
-                db.Images.AddRange(GetImages(db).ToArray());
-                db.SaveChanges();
-            }
-            if (!db.Posts.Any())
-            {
-                db.Posts.AddRange(GetPosts(db).ToArray());
-                db.SaveChanges();
-            }
-            if (!db.Comments.Any())
-            {
-                db.Comments.AddRange(GetComments(db).ToArray());
-                db.SaveChanges();
-            }
+
+
+                if (!db.Images.Any())
+                {
+                    db.Images.AddRange(GetImages(db).ToArray());
+                    db.SaveChanges();
+                }
+                if (!db.Posts.Any())
+                {
+                    db.Posts.AddRange(GetPosts(db).ToArray());
+                    db.SaveChanges();
+                }
+                if (!db.Comments.Any())
+                {
+                    db.Comments.AddRange(GetComments(db).ToArray());
+                    db.SaveChanges();
+                }
+   
         }
 
         public static async void UserSeedAsync(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager)
@@ -52,7 +54,7 @@ namespace api_thinkaboutitbc.Data
             {
                 await roleManager.CreateAsync(new IdentityRole("Member"));
             }
-            if (await userManager.FindByNameAsync("a") == null)
+            if (await userManager.FindByNameAsync("The_Editor") == null)
             {
                 var user = new ApplicationUser
                 {
@@ -62,7 +64,7 @@ namespace api_thinkaboutitbc.Data
                     LastName = "Beaudry",
                     ProviderName = "EMAIL"
                 };
-                var result = await userManager.CreateAsync(user, "mysonbrynisagenius");
+                var result = await userManager.CreateAsync(user, "MerryChristmas1!");
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(user, "Admin");
@@ -154,6 +156,7 @@ namespace api_thinkaboutitbc.Data
                     Title = "Things are looking up for BC's economy because of CN Rail",
                     Text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
                     Image = context.Images.FirstOrDefault(i => i.Id == 1),
+                    CreatedBy = context.ApplicationUsers.FirstOrDefault(u => u.Email.Equals("richardbeaudry@shaw.ca"))
                 },
             };
             //context.SaveChanges();
