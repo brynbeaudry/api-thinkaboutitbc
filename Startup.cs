@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
@@ -11,12 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using api_thinkaboutitbc.Data;
 using api_thinkaboutitbc.Models;
 using api_thinkaboutitbc.Services;
-using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using AspNet.Security.OpenIdConnect.Primitives;
 using Microsoft.AspNetCore.HttpOverrides;
+using AspNet.Security.OpenIdConnect.Primitives;
 
 namespace api_thinkaboutitbc
 {
@@ -220,8 +213,11 @@ namespace api_thinkaboutitbc
                     template: "{controller=Home}/{action=Index}/{id?}");
                 //routes.MapRoute()
             });
-
-            DummyData.Initialize(ctx);
+            if (ctx.Database.EnsureCreated())
+            {
+                DummyData.Initialize(ctx, app.ApplicationServices);
+            }
+           
 
 
             // Seed the database with the sample applications.
