@@ -26,8 +26,12 @@ namespace api_thinkaboutitbc.Controllers.api
         public IEnumerable<Post> GetPosts()
         {
             return _context.Posts
+                .Include(p => p.Image)
+                .Include(p => p.CreatedBy)
                 .Include(p => p.Comments)
-                .Include(p => p.Image);
+                    .ThenInclude(c => c.Image)
+                .Include(p => p.Comments)
+                    .ThenInclude(c => c.CreatedBy);
         }
 
         // GET: api/Posts/5
