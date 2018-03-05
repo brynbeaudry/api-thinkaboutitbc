@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using api_thinkaboutitbc.Data;
 using api_thinkaboutitbc.Models;
+using System.Text;
 
 namespace api_thinkaboutitbc.Controllers.api
 {
@@ -27,6 +28,9 @@ namespace api_thinkaboutitbc.Controllers.api
         {
             return _context.Posts
                 .Include(p => p.Image)
+                    .ThenInclude(i => Encoding.UTF8.GetString(i.FullImage))
+                .Include(p => p.Image)
+                    .ThenInclude(i => Encoding.UTF8.GetString(i.ThumbnailImage))
                 .Include(p => p.CreatedBy)
                 .Include(p => p.Comments)
                     .ThenInclude(c => c.Image)
