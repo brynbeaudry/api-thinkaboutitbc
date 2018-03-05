@@ -28,9 +28,6 @@ namespace api_thinkaboutitbc.Controllers.api
         {
             return _context.Posts
                 .Include(p => p.Image)
-                    .ThenInclude(i => Encoding.UTF8.GetString(i.FullImage))
-                .Include(p => p.Image)
-                    .ThenInclude(i => Encoding.UTF8.GetString(i.ThumbnailImage))
                 .Include(p => p.CreatedBy)
                 .Include(p => p.Comments)
                     .ThenInclude(c => c.Image)
