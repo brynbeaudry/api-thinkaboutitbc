@@ -25,7 +25,8 @@ namespace api_thinkaboutitbc.Controllers.api
         [HttpGet]
         public IEnumerable<Post> GetPosts()
         {
-            return _context.Posts;
+            return _context.Posts
+                .Include(p => p.Comments);
         }
 
         // GET: api/Posts/5
