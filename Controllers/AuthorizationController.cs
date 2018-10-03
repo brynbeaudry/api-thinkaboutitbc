@@ -516,6 +516,7 @@ namespace api_thinkaboutitbc.Controllers
             if (fbDetails != null)
             {
                 // save 
+                Console.WriteLine($"Facebook details: {fbDetails}");
                 //check to see if the ProviderId is already listed for this user
                 var repeatUser = _ctx.Users
                     .Where(x => x.ProviderId.Equals(fbDetails.ProviderUserId))
