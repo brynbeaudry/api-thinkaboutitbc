@@ -34,7 +34,7 @@ namespace api_thinkaboutitbc.Controllers
     private readonly ApplicationDbContext _ctx;
     private const string GoogleApiTokenInfoUrl = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={0}";
     private const string GoogleApiUserInfoUrl = "https://www.googleapis.com/plus/v1/people/{0}?userIp={1}&key={2}";
-    private const string FacebookApiUserInfoUrl = "https://graph.facebook.com/{2}?input_token={0}&access_token={1}&fields={3}";
+    private const string FacebookApiUserInfoUrl = "https://graph.facebook.com/v3.1/{2}?input_token={0}&access_token={1}&fields={3}";
     private const string FacebookApiTokenInfoUrl = "https://graph.facebook.com/debug_token?input_token={0}&access_token={1}";
 
 
