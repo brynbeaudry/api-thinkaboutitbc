@@ -165,10 +165,10 @@ namespace api_thinkaboutitbc.Controllers
 
         return new ProviderUserDetails
         {
-            Email = fbUserInfo.email,
+            Email = fbUserInfo.email ?? "NONE",
             FirstName = fbUserInfo.first_name,
             LastName = fbUserInfo.last_name,
-            Locale = fbUserInfo.locale,
+            Locale = fbUserInfo.locale ?? "EN-us",
             Name = fbUserInfo.name,
             ProviderUserId = fbUserInfo.id
         };
