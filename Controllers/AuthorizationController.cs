@@ -103,7 +103,7 @@ namespace api_thinkaboutitbc.Controllers
             else
             {
                 //have provider user id , get user id
-                RequestUri = new Uri(string.Format(url, providerToken, $"{AppId}|{AppSecret}", ProviderUserId, "id,email,name,about,first_name,last_name,locale"));
+                RequestUri = new Uri(string.Format(url, $"{AppId}|{AppSecret}", providerToken, ProviderUserId, "id,email,name,about,first_name,last_name,locale"));
             }
         }
         else if (providerName == "GOOGLE")
