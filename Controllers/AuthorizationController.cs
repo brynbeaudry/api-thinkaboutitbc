@@ -61,6 +61,9 @@ namespace api_thinkaboutitbc.Controllers
         var httpClient = new HttpClient();
         var requestUri = new Uri(string.Format(GoogleApiTokenInfoUrl, providerToken));
 
+        // private const string GoogleApiTokenInfoUrl = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={0}";
+        // private const string GoogleApiUserInfoUrl = "https://www.googleapis.com/plus/v1/people/{0}?access_token={1}&key={2}";
+
         var tokenInfoResponse = await getHttpResponseResult(GoogleApiTokenInfoUrl, providerToken, "GOOGLE");
 
         GoogleApiTokenInfo googleApiTokenInfo = JsonConvert.DeserializeObject<GoogleApiTokenInfo>(tokenInfoResponse.ToString());
@@ -76,11 +79,11 @@ namespace api_thinkaboutitbc.Controllers
 
         return new ProviderUserDetails
         {
-            Email = googleApiTokenInfo.email ?? "NONE",
-            FirstName = googleApiTokenInfo.given_name ?? googleUserInfo.name["givenName"] ?? "NOT AVAILABLE",
-            LastName = googleApiTokenInfo.family_name ?? googleUserInfo.name["familyName"] ?? "NOT AVAILABLE",
-            Locale = googleApiTokenInfo.locale ?? "EN-us",
-            Name = googleApiTokenInfo.name ?? $"{googleUserInfo.name["givenName"]} {googleUserInfo.name["familyName"]}",
+            Email = googleApiTokenInfo.email ?? googleUserInfo.emails[0]["value"].ToString() ?? "NONE",
+            FirstName = googleUserInfo.name["givenName"].ToString() ?? "NOT AVAILABLE",
+            LastName = googleUserInfo.name["familyName"].ToString() ?? "NOT AVAILABLE",
+            Locale = googleApiTokenInfo.locale ?? googleUserInfo.language ?? "EN-us",
+            Name = googleApiTokenInfo.name ?? googleUserInfo.displayName,
             ProviderUserId = googleApiTokenInfo.sub ?? googleUserInfo.id
         };
     }
@@ -110,9 +113,6 @@ namespace api_thinkaboutitbc.Controllers
         {
             var GoogleConfig = _config.GetSection("ExternalIdentities").GetSection("Google");
             var GoogleApiKey = GoogleConfig["api_key"];
-
-            /* private const string GoogleApiTokenInfoUrl = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={0}";
-            private const string GoogleApiUserInfoUrl = "https://www.googleapis.com/plus/v1/people/{0}?userIp={1}&key={2}"; */
 
             if (ProviderUserId.CompareTo("") == 0)
             {
