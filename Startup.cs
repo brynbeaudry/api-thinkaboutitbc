@@ -92,7 +92,7 @@ namespace api_thinkaboutitbc
                        //.AllowImplicitFlow()
                        .AllowRefreshTokenFlow()
                        //warning!!!!!! configure allowed audiences or clients
-                       .AllowCustomFlow("urn:ietf:params:oauth:grant-type:google_identity_token")
+                       .AllowCustomFlow("urn:ietf:params:oauth:grant-type:google_access_token")
                        .AllowCustomFlow("urn:ietf:params:oauth:grant-type:facebook_access_token");
 
 

@@ -388,7 +388,7 @@ namespace api_thinkaboutitbc.Controllers
             return SignIn(ticket.Principal, ticket.Properties, ticket.AuthenticationScheme);
         }
 
-        if (request.GrantType == "urn:ietf:params:oauth:grant-type:google_identity_token")
+        if (request.GrantType == "urn:ietf:params:oauth:grant-type:google_access_token")
         {
             // Reject the request if the "assertion" parameter is missing.
             if (string.IsNullOrEmpty(request.Assertion))
