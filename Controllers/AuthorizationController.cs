@@ -65,6 +65,7 @@ namespace api_thinkaboutitbc.Controllers
         // private const string GoogleApiUserInfoUrl = "https://www.googleapis.com/plus/v1/people/{0}?access_token={1}&key={2}";
 
         var tokenInfoResponse = await getHttpResponseResult(GoogleApiTokenInfoUrl, providerToken, "GOOGLE");
+        Console.Write(tokenInfoResponse.ToString());
 
         GoogleApiTokenInfo googleApiTokenInfo = JsonConvert.DeserializeObject<GoogleApiTokenInfo>(tokenInfoResponse.ToString());
 
