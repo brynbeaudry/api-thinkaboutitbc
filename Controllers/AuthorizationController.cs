@@ -32,8 +32,9 @@ namespace api_thinkaboutitbc.Controllers
     private readonly IConfiguration _config;
 
     private readonly ApplicationDbContext _ctx;
-    private const string GoogleApiTokenInfoUrl = "https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={0}";
-    private const string GoogleApiUserInfoUrl = "https://www.googleapis.com/plus/v1/people/{0}?userIp={1}&key={2}";
+    private const string GoogleApiTokenInfoUrl = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={0}";
+    private const string GoogleApiUserInfoUrl = "https://www.googleapis.com/plus/v1/people/{0}?access_token={1}&key={2}";
+
     private const string FacebookApiUserInfoUrl = "https://graph.facebook.com/v3.1/{2}?input_token={0}&access_token={1}&fields={3}";
     private const string FacebookApiTokenInfoUrl = "https://graph.facebook.com/debug_token?input_token={0}&access_token={1}";
 
@@ -60,9 +61,6 @@ namespace api_thinkaboutitbc.Controllers
 
         var httpClient = new HttpClient();
         var requestUri = new Uri(string.Format(GoogleApiTokenInfoUrl, providerToken));
-
-        // private const string GoogleApiTokenInfoUrl = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={0}";
-        // private const string GoogleApiUserInfoUrl = "https://www.googleapis.com/plus/v1/people/{0}?access_token={1}&key={2}";
 
         var tokenInfoResponse = await getHttpResponseResult(GoogleApiTokenInfoUrl, providerToken, "GOOGLE");
         Console.Write(tokenInfoResponse.ToString());
@@ -117,7 +115,7 @@ namespace api_thinkaboutitbc.Controllers
 
             if (ProviderUserId.CompareTo("") == 0)
             {
-                //fprovider id is nothing, get token info
+                //provider id is nothing, get token info
                 RequestUri = new Uri(string.Format(url, providerToken));
             }
             else
