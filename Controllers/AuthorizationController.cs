@@ -418,9 +418,7 @@ namespace api_thinkaboutitbc.Controllers
                 //this signed in google user is not a repeat user and hasn't been saved yet
                 if (repeatUser == null)
                 {
-
-                    var result = await _userManager.CreateAsync(
-                    new ApplicationUser()
+                    var newUser = new ApplicationUser()
                     {
                         Email = googleDetails.Email,
                         FirstName = googleDetails.FirstName,
@@ -430,7 +428,8 @@ namespace api_thinkaboutitbc.Controllers
                         ProviderId = googleDetails.ProviderUserId,
                         ProviderName = "GOOGLE",
                         PictureUrl = "https://cdn.iconscout.com/public/images/icon/premium/png-512/gamer-games-video-casino-372bcf114ef0140a-512x512.png"
-                    });
+                    };
+                    var result = await _userManager.CreateAsync(newUser);
                     if (!result.Succeeded)
                     {
                         AddErrors(result);
@@ -448,31 +447,40 @@ namespace api_thinkaboutitbc.Controllers
                         //_logger.LogInformation("User created a new account with password.");
                         //return Ok(result);
                         //return RedirectToLocal(returnUrl);
-                    }
+
+                        identity.AddClaim(OpenIdConnectConstants.Claims.Subject,
+                            newUser.Id,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                        identity.AddClaim(OpenIdConnectConstants.Claims.Name, newUser.FullName,
+                                OpenIdConnectConstants.Destinations.AccessToken);
+                        identity.AddClaim(OpenIdConnectConstants.Claims.Email,
+                            newUser.Email,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                        identity.AddClaim(OpenIdConnectConstants.Claims.GivenName,
+                            newUser.FirstName,
+                                OpenIdConnectConstants.Destinations.AccessToken);
+                        identity.AddClaim(OpenIdConnectConstants.Claims.FamilyName,
+                            newUser.LastName,
+                                OpenIdConnectConstants.Destinations.AccessToken);
+                        }
+                } else {
+                    // repeat user is not null
+                    identity.AddClaim(OpenIdConnectConstants.Claims.Subject,
+                            repeatUser.Id,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                    identity.AddClaim(OpenIdConnectConstants.Claims.Name, repeatUser.FullName,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                    identity.AddClaim(OpenIdConnectConstants.Claims.Email,
+                        repeatUser.Email,
+                        OpenIdConnectConstants.Destinations.AccessToken);
+                    identity.AddClaim(OpenIdConnectConstants.Claims.GivenName,
+                        repeatUser.FirstName,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                    identity.AddClaim(OpenIdConnectConstants.Claims.FamilyName,
+                        repeatUser.LastName,
+                            OpenIdConnectConstants.Destinations.AccessToken);
                 }
             }
-
-
-            // Manually validate the identity token issued by Google,
-            // including the issuer, the signature and the audience.
-            // Then, copy the claims you need to the "identity" instance.
-            identity.AddClaim(OpenIdConnectConstants.Claims.Subject,
-                    googleDetails.ProviderUserId,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.Name, googleDetails.Name,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.Email,
-                googleDetails.Email,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.GivenName,
-                googleDetails.FirstName,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.FamilyName,
-                googleDetails.LastName,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.Locale,
-                googleDetails.Locale,
-                    OpenIdConnectConstants.Destinations.AccessToken);
 
             // Create a new authentication ticket holding the user identity.
 
@@ -523,18 +531,18 @@ namespace api_thinkaboutitbc.Controllers
                 // save 
                 if (repeatUser == null)
                 {
-                    var result = await _userManager.CreateAsync(
-                        new ApplicationUser()
-                        {
-                            Email = fbDetails.Email,
-                            UserName = $"{fbDetails.Email.Split('@')[0]}_Facebook",
-                            FirstName = fbDetails.FirstName,
-                            FullName = fbDetails.Name,
-                            LastName = fbDetails.LastName,
-                            ProviderId = fbDetails.ProviderUserId,
-                            ProviderName = "FACEBOOK",
-                            PictureUrl = "https://cdn.iconscout.com/public/images/icon/premium/png-512/gamer-games-video-casino-372bcf114ef0140a-512x512.png"
-                        });
+                    var newUser = new ApplicationUser()
+                    {
+                        Email = fbDetails.Email,
+                        UserName = $"{fbDetails.Email.Split('@')[0]}_Facebook",
+                        FirstName = fbDetails.FirstName,
+                        FullName = fbDetails.Name,
+                        LastName = fbDetails.LastName,
+                        ProviderId = fbDetails.ProviderUserId,
+                        ProviderName = "FACEBOOK",
+                        PictureUrl = "https://cdn.iconscout.com/public/images/icon/premium/png-512/gamer-games-video-casino-372bcf114ef0140a-512x512.png"
+                    };
+                    var result = await _userManager.CreateAsync(newUser);
                     if (!result.Succeeded)
                     {
                         AddErrors(result);
@@ -552,30 +560,39 @@ namespace api_thinkaboutitbc.Controllers
                         //_logger.LogInformation("User created a new account with password.");
                         //return Ok(result);
                         //return RedirectToLocal(returnUrl);
+                        identity.AddClaim(OpenIdConnectConstants.Claims.Subject,
+                            newUser.Id,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                        identity.AddClaim(OpenIdConnectConstants.Claims.Name, newUser.FullName,
+                                OpenIdConnectConstants.Destinations.AccessToken);
+                        identity.AddClaim(OpenIdConnectConstants.Claims.Email,
+                            newUser.Email,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                        identity.AddClaim(OpenIdConnectConstants.Claims.GivenName,
+                            newUser.FirstName,
+                                OpenIdConnectConstants.Destinations.AccessToken);
+                        identity.AddClaim(OpenIdConnectConstants.Claims.FamilyName,
+                            newUser.LastName,
+                                OpenIdConnectConstants.Destinations.AccessToken);
                     }
+                } else {
+                    // repeat user is not null
+                    identity.AddClaim(OpenIdConnectConstants.Claims.Subject,
+                            repeatUser.Id,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                    identity.AddClaim(OpenIdConnectConstants.Claims.Name, repeatUser.FullName,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                    identity.AddClaim(OpenIdConnectConstants.Claims.Email,
+                        repeatUser.Email,
+                        OpenIdConnectConstants.Destinations.AccessToken);
+                    identity.AddClaim(OpenIdConnectConstants.Claims.GivenName,
+                        repeatUser.FirstName,
+                            OpenIdConnectConstants.Destinations.AccessToken);
+                    identity.AddClaim(OpenIdConnectConstants.Claims.FamilyName,
+                        repeatUser.LastName,
+                            OpenIdConnectConstants.Destinations.AccessToken);
                 }
             }
-
-            // Manually validate the identity token issued by Google,
-            // including the issuer, the signature and the audience.
-            // Then, copy the claims you need to the "identity" instance.
-            identity.AddClaim(OpenIdConnectConstants.Claims.Subject,
-                    fbDetails.ProviderUserId,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.Name, fbDetails.Name,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.Email,
-                fbDetails.Email,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.GivenName,
-                fbDetails.FirstName,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.FamilyName,
-                fbDetails.LastName,
-                    OpenIdConnectConstants.Destinations.AccessToken);
-            identity.AddClaim(OpenIdConnectConstants.Claims.Locale,
-                fbDetails.Locale,
-                    OpenIdConnectConstants.Destinations.AccessToken);
 
             // Create a new authentication ticket holding the user identity.
 
