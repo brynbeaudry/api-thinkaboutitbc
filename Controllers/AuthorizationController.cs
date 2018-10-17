@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenIddict.Core;
+using OpenIddict.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,9 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Collections.Immutable;
+using AspNet.Security.OAuth.Validation;
+using System.Threading;
 
 namespace api_thinkaboutitbc.Controllers
 {
@@ -30,6 +34,8 @@ namespace api_thinkaboutitbc.Controllers
     private readonly IEmailSender _emailSender;
     private readonly ILogger _logger;
     private readonly IConfiguration _config;
+    private readonly OpenIddictTokenManager<OpenIddictToken> _tokenManager;
+    private readonly OpenIddictAuthorizationManager<OpenIddictAuthorization> _authorizationManager;
 
     private readonly ApplicationDbContext _ctx;
     private const string GoogleApiTokenInfoUrl = "https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={0}";
@@ -45,7 +51,9 @@ namespace api_thinkaboutitbc.Controllers
         IEmailSender emailSender,
         ILogger<AuthorizationController> logger,
         IConfiguration configuration,
-        ApplicationDbContext ctx
+        ApplicationDbContext ctx,
+        OpenIddictTokenManager<OpenIddictToken> tokenManager,
+        OpenIddictAuthorizationManager<OpenIddictAuthorization> authorizationManager
         )
     {
         _userManager = userManager;
@@ -54,6 +62,8 @@ namespace api_thinkaboutitbc.Controllers
         _logger = logger;
         _config = configuration;
         _ctx = ctx;
+        _tokenManager = tokenManager;
+        _authorizationManager = authorizationManager;
     }
 
     public async Task<ProviderUserDetails> GetGoogleDetailsAsync(string providerToken)
@@ -700,6 +710,39 @@ namespace api_thinkaboutitbc.Controllers
         // Returning a SignOutResult will ask OpenIddict to redirect the user agent
         // to the post_logout_redirect_uri specified by the client application.
         return SignOut(OpenIdConnectServerDefaults.AuthenticationScheme);
+    }
+
+    [HttpGet("/api/logout/{id}")]
+    [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = OAuthValidationDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> LogoutApi([FromRoute] string id)
+    {
+        CancellationToken ct = new CancellationToken();
+        ImmutableArray<OpenIddictToken> tokenList = await _tokenManager.FindBySubjectAsync(id, ct);
+        var isAuthorizationsDeleted = true;
+        foreach (var item in tokenList)
+        {
+            //var authorization = await _authorizationManager.Find
+            CancellationToken ct2 = new CancellationToken();
+            var authorizationId = await _tokenManager.GetAuthorizationIdAsync(item, ct2);
+            var authorization = await _authorizationManager.FindByIdAsync(authorizationId, ct2);
+            var deleteAuthorizationTask = _authorizationManager.DeleteAsync(authorization, ct2);
+            await deleteAuthorizationTask;
+            if(!deleteAuthorizationTask.IsCompletedSuccessfully){
+                isAuthorizationsDeleted = false;
+                break;
+            }
+        }
+        if(!isAuthorizationsDeleted){
+            return BadRequest( new JObject { 
+                {"success", false},
+                {"message", "Couldn't Delete Authorizations"}
+                } );
+        }
+        return Ok(new JObject { 
+                {"success", true},
+                {"message", "No more authorizations for this user remain. Logout Successful"}
+                } );
     }
 
     [HttpGet("/api/userinfo")]
